@@ -38,7 +38,8 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	userService := service.NewUserService(repo)
 
 	// Call the service to create a user
-	err = userService.InputDataUser(user.Name, user.Username, user.Password)
+	var users map[string]interface{}
+	users, err = userService.InputDataUser(user.Name, user.Username, user.Password)
 	if err != nil {
 		badResponse.Message = err.Error()
 		json.NewEncoder(w).Encode(badResponse)
@@ -49,7 +50,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	response := model.Response{
 		StatusCode: http.StatusOK,
 		Message:    "User created successfully",
-		Data:       user,
+		Data:       users,
 	}
 	json.NewEncoder(w).Encode(response)
 }

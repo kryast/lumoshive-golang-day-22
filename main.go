@@ -14,7 +14,8 @@ func main() {
 
 	serverMux.HandleFunc("POST /users/create-task", handler.CreateTaskHandler)
 	serverMux.HandleFunc("GET /users/list-task", handler.GetAllTasksHandler)
-	serverMux.HandleFunc("GET /users/{id}", handler.GetAllTasksHandler)
+	serverMux.HandleFunc("POST /users/list-task/{id}", handler.UpdateTaskStatusHandler)
+	serverMux.HandleFunc("GET /users/{id}", handler.GetUserDetailsHandler)
 
 	fmt.Println("Server started on port 8080")
 	http.ListenAndServe(":8080", serverMux)

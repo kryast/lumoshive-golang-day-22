@@ -9,12 +9,12 @@ import (
 	"strconv"
 )
 
-func GetUserDetailsHandler(w http.ResponseWriter, r *http.Request) {
-	// Mengambil ID dari URL parameter (misalnya /user/{id})
-	idParam := r.PathValue("id")
+func UpdateTaskStatusHandler(w http.ResponseWriter, r *http.Request) {
+	// Mengambil ID task dari URL parameter (misalnya /task/{id}/status)
+	idParam := r.URL.Query().Get("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil || id <= 0 {
-		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+		http.Error(w, "Invalid task ID", http.StatusBadRequest)
 		return
 	}
 
@@ -25,21 +25,20 @@ func GetUserDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	// Menggunakan service untuk mendapatkan detail user
-	repo := repository.NewUserRepository(db)
-	userService := service.NewUserService(repo) // Gantilah dengan repository yang sesuai
-	user, err := userService.GetUserDetails(id)
+	// Menggunakan service untuk memperbarui status task
+	repo := repository.NewTaskRepository(db)
+	taskService := service.NewTaskService(repo) // Gantilah dengan repository yang sesuai
+	err = taskService.UpdateTaskStatus(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Mengirimkan response JSON
+	// Mengirimkan response sukses jika status berhasil diperbarui
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"StatusCode": 200,
-		"Message":    "User details fetched successfully",
-		"Data":       user,
+		"Message":    "Task status updated successfully",
 	})
 }

@@ -15,21 +15,23 @@ func NewUserService(repo repository.UserRepositoryDB) *UserService {
 	return &UserService{RepoUser: repo}
 }
 
-func (us *UserService) InputDataUser(name string, username string, password string) error {
+func (us *UserService) InputDataUser(name string, username string, password string) (map[string]interface{}, error) {
 	if name == "" {
-		return errors.New("username tidak boleh kosong")
+		return nil, errors.New("username tidak boleh kosong")
 	}
 	if username == "" {
-		return errors.New("username tidak boleh kosong")
+		return nil, errors.New("username tidak boleh kosong")
 	}
 	if password == "" {
-		return errors.New("password tidak boleh kosong")
+		return nil, errors.New("password tidak boleh kosong")
 	}
 
 	user := model.User{
 		Name:     name,
 		Username: username,
 		Password: password,
+		Status:   "inActive",
+		Token:    "nil",
 	}
 
 	err := us.RepoUser.CreateDataUser(user)
@@ -37,7 +39,16 @@ func (us *UserService) InputDataUser(name string, username string, password stri
 		fmt.Println("Error :", err)
 	}
 
+	response := map[string]interface{}{
+		"id":       user.ID,
+		"name":     user.Name,
+		"username": user.Username,
+		"password": user.Password,
+		"status":   user.Status,
+		"token":    user.Token,
+	}
+
 	fmt.Println("berhasil input data user dengan id ", user.ID)
 
-	return nil
+	return response, nil
 }

@@ -14,7 +14,7 @@ func NewUserRepository(db *sql.DB) UserRepositoryDB {
 }
 
 func (r *UserRepositoryDB) CreateDataUser(user model.User) error {
-	query := "INSERT INTO users (name , username, password, status) VALUES ($1 , $2 , $3, 'InActive') RETURNING id"
+	query := "INSERT INTO users (name , username, password, status, token) VALUES ($1 , $2 , $3, 'InActive', 'nil') RETURNING id"
 
 	err := r.DB.QueryRow(query, user.Name, user.Username, user.Password).Scan(&user.ID)
 	if err != nil {
