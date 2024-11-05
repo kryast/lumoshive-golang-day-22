@@ -1,17 +1,12 @@
 package handler
 
 import (
-	"day-22/database"
-	"day-22/model"
-	"day-22/repository"
-	"day-22/service"
-	"encoding/json"
+	"day-22/library"
 	"net/http"
 	"strconv"
 )
 
-func GetUserDetailsHandler(w http.ResponseWriter, r *http.Request) {
-	// Mengambil ID dari URL parameter (misalnya /user/{id})
+func (uh *UserHandler) GetUserDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	idParam := r.PathValue("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil || id <= 0 {
@@ -19,26 +14,11 @@ func GetUserDetailsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db, err := database.InitDB()
-	if err != nil {
-		http.Error(w, "Error connecting to the database", http.StatusInternalServerError)
-		return
-	}
-	defer db.Close()
-
-	// Menggunakan service untuk mendapatkan detail user
-	repo := repository.NewUserRepository(db)
-	userService := service.NewUserService(repo) // Gantilah dengan repository yang sesuai
-	user, err := userService.GetUserDetails(id)
+	user, err := uh.serviceUsers.GetUserDetails(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	response := model.Response{
-		StatusCode: http.StatusOK,
-		Message:    "List Data users",
-		Data:       user,
-	}
-	json.NewEncoder(w).Encode(response)
+	library.SuccessResponse(w, "success get users detail", user)
 }
