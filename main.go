@@ -10,6 +10,7 @@ func main() {
 	serverMux := http.NewServeMux()
 
 	serverMux.HandleFunc("POST /create", handler.CreateUserHandler)
+	serverMux.HandleFunc("POST /login", handler.UserLoginHandler)
 	serverMux.HandleFunc("GET /users", handler.GetAllUsersHandler)
 
 	serverMux.HandleFunc("POST /users/create-task", handler.CreateTaskHandler)

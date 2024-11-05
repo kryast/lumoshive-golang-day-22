@@ -9,3 +9,6 @@ curl -X GET http://localhost:8080/users/1
 
 <!-- method update task -->
 curl -X POST http://localhost:8080/users/list-task/1
+
+<!-- method login user -->
+curl -X POST http://localhost:8080/login -d '{"username": "user1", "password": "pass"}'
