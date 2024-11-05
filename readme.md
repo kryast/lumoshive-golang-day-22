@@ -3,3 +3,6 @@ curl -X POST http://localhost:8080/create -d '{"name": "Ahmad 5", "username" : "
 
 <!-- method create task -->
 curl -X POST http://localhost:8080/users/create-task -d '{"description" : "description 3"}'
+
+<!-- method get user detail -->
+curl -X GET http://localhost:8080/users/1
