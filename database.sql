@@ -5,3 +5,9 @@ CREATE TABLE users (
     password VARCHAR(100),
     status VARCHAR(100)
 );
+
+CREATE TABLE tasks (
+    id SERIAL PRIMARY KEY,
+    description VARCHAR(256),
+    status VARCHAR(100)
+);
