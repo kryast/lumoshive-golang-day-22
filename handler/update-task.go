@@ -11,7 +11,7 @@ import (
 
 func UpdateTaskStatusHandler(w http.ResponseWriter, r *http.Request) {
 	// Mengambil ID task dari URL parameter (misalnya /task/{id}/status)
-	idParam := r.URL.Query().Get("id")
+	idParam := r.PathValue("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil || id <= 0 {
 		http.Error(w, "Invalid task ID", http.StatusBadRequest)
@@ -34,9 +34,6 @@ func UpdateTaskStatusHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Mengirimkan response sukses jika status berhasil diperbarui
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"StatusCode": 200,
 		"Message":    "Task status updated successfully",

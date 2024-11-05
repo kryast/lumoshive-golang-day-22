@@ -7,7 +7,7 @@ import (
 )
 
 func (r *UserRepositoryDB) GetDetailUsers(id int) (*model.User, error) {
-	query := `SELECT name, username, password, status, token FROM users WHERE id = $1`
+	query := `SELECT id, name, username, password, status, token FROM users WHERE id = $1`
 	rows := r.DB.QueryRow(query, id)
 
 	var user model.User

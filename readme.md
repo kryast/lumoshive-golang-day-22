@@ -6,3 +6,6 @@ curl -X POST http://localhost:8080/users/create-task -d '{"description" : "descr
 
 <!-- method get user detail -->
 curl -X GET http://localhost:8080/users/1
+
+<!-- method update task -->
+curl -X POST http://localhost:8080/users/list-task/1

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"day-22/database"
+	"day-22/model"
 	"day-22/repository"
 	"day-22/service"
 	"encoding/json"
@@ -34,12 +35,10 @@ func GetUserDetailsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Mengirimkan response JSON
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"StatusCode": 200,
-		"Message":    "User details fetched successfully",
-		"Data":       user,
-	})
+	response := model.Response{
+		StatusCode: http.StatusOK,
+		Message:    "List Data users",
+		Data:       user,
+	}
+	json.NewEncoder(w).Encode(response)
 }
