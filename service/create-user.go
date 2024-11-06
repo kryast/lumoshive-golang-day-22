@@ -52,3 +52,8 @@ func (us *UserService) InputDataUser(name string, username string, password stri
 
 	return response, nil
 }
+
+func (us *UserService) CheckToken(token string) string {
+	result := us.RepoUser.CheckToken(token)
+	return result
+}

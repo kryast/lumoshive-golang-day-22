@@ -4,7 +4,6 @@ import (
 	"day-22/library"
 	"day-22/model"
 	"day-22/service"
-	"encoding/json"
 	"net/http"
 )
 
@@ -17,21 +16,27 @@ func NewUserHandler(us service.UserService) UserHandler {
 }
 
 func (uh *UserHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
-	var user model.User
-	err := json.NewDecoder(r.Body).Decode(&user)
+	// Jika menggunakan form-urlencoded, gunakan r.FormValue() untuk mengambil data
+	name := r.FormValue("name")
+	username := r.FormValue("username")
+	password := r.FormValue("password")
 
-	if err != nil {
-		library.BadResponse(w, err.Error())
+	// Validasi inputan
+	if name == "" || username == "" || password == "" {
+		library.BadResponse(w, "Nama, Username, dan Password tidak boleh kosong")
 		return
 	}
+
+	// Buat user
+	user := model.User{Name: name, Username: username, Password: password}
 
 	var users map[string]interface{}
-	users, err = uh.serviceUsers.InputDataUser(user.Name, user.Username, user.Password)
+	users, err := uh.serviceUsers.InputDataUser(user.Name, user.Username, user.Password)
 	if err != nil {
 		library.BadResponse(w, err.Error())
 		return
 	}
 
-	library.SuccessResponse(w, "Success create user", users)
-	http.Redirect(w, r, "/all-customer", http.StatusSeeOther)
+	templates.ExecuteTemplate(w, "register-view", users)
+
 }

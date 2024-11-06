@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"day-22/model"
-	"errors"
 	"fmt"
 )
 
@@ -26,22 +25,11 @@ func (r *UserRepositoryDB) CreateDataUser(user model.User) error {
 	return nil
 }
 
-func (repo *UserRepositoryDB) GetUserByToken(token string) (model.User, error) {
-	// Query untuk mencari user berdasarkan token
-	var user model.User
-	query := "SELECT id, name, username, password, status, token FROM users WHERE token = ?"
-	err := repo.DB.QueryRow(query, token).Scan(&user.ID, &user.Name, &user.Username, &user.Password, &user.Status, &user.Token)
+func (ur *UserRepositoryDB) CheckToken(token string) string {
+	var tokenResult string
+	query := `SELECT token FROM users WHERE token=$1`
+	err := ur.DB.QueryRow(query, token).Scan(&tokenResult)
 
-	// Jika token tidak ditemukan
-	if err != nil {
-		if err == sql.ErrNoRows {
-			// Token tidak ditemukan
-			return user, errors.New("token tidak ditemukan")
-		}
-		// Error lainnya
-		return user, fmt.Errorf("error querying database: %v", err)
-	}
-
-	// Kembalikan user yang ditemukan
-	return user, nil
+	fmt.Println(err)
+	return tokenResult
 }

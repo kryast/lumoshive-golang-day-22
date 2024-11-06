@@ -1,30 +1,31 @@
 package middleware
 
 import (
+	"day-22/database"
 	"day-22/model"
 	"day-22/repository"
+	"day-22/service"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
-type Middleware struct {
-	RepoUser repository.UserRepositoryDB
-}
-
-func NewMiddleware(repo repository.UserRepositoryDB) *Middleware {
-	return &Middleware{RepoUser: repo}
-}
-
-func (mw *Middleware) Middleware(next http.Handler) http.Handler {
+func Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Ambil token dari header Authorization
-		authHeader := r.Header.Get("Token")
+		authHeader := r.Header.Get("token")
 
-		// Jika token kosong atau "nil", langsung return Unauthorized
-		if authHeader == "" || authHeader == "nil" {
+		db, err := database.InitDB()
+		if err != nil {
+			fmt.Println("err ", err)
+		}
+		repo := repository.NewUserRepository(db)
+		serviceUser := service.NewUserService(repo)
+
+		token := serviceUser.CheckToken(authHeader)
+		if token == "" || token == "nil" {
 			badResponse := model.Response{
 				StatusCode: http.StatusUnauthorized,
-				Message:    "Unauthorized: Token tidak ditemukan",
+				Message:    "Unauthorized",
 				Data:       nil,
 			}
 			w.WriteHeader(http.StatusUnauthorized)
@@ -32,20 +33,7 @@ func (mw *Middleware) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// Verifikasi token di database
-		user, err := mw.RepoUser.GetUserByToken(authHeader)
-		if err != nil || user.Token != authHeader {
-			badResponse := model.Response{
-				StatusCode: http.StatusUnauthorized,
-				Message:    "Unauthorized: Token tidak valid",
-				Data:       nil,
-			}
-			w.WriteHeader(http.StatusUnauthorized)
-			json.NewEncoder(w).Encode(badResponse)
-			return
-		}
-
-		// Jika token valid, lanjutkan ke handler berikutnya
+		// Melanjutkan ke handler berikutnya
 		next.ServeHTTP(w, r)
 	})
 }

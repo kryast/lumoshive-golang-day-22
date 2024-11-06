@@ -3,6 +3,7 @@ package main
 import (
 	"day-22/database"
 	"day-22/handler"
+	"day-22/middleware"
 	"day-22/repository"
 	"day-22/service"
 	"fmt"
@@ -28,17 +29,22 @@ func main() {
 	serverMux := http.NewServeMux()
 
 	serverMux.HandleFunc("/users", userHandler.GetAllUsersHandler)
-	serverMux.HandleFunc("/users/list-task", taskHandler.GetAllTasksHandler)
-	serverMux.HandleFunc("/users/list-task/{id}", taskHandler.UpdateTaskStatusHandler)
+	// serverMux.HandleFunc("/users/list-task", taskHandler.GetAllTasksHandler)
+	// serverMux.HandleFunc("/users/list-task/{id}", taskHandler.UpdateTaskStatusHandler)
 	serverMux.HandleFunc("/users/{id}", userHandler.GetUserDetailsHandler)
 	serverMux.HandleFunc("/", handler.FormRegist)
+
+	todoRoute := http.NewServeMux()
+	todoRoute.HandleFunc("GET /users/list-task", taskHandler.GetAllTasksHandler)
+	middRoute := middleware.Middleware(todoRoute)
+	serverMux.Handle("/users/list-task", middRoute)
 
 	serverMux.HandleFunc("POST /create", userHandler.CreateUserHandler)
 	serverMux.HandleFunc("POST /login", userHandler.UserLoginHandler)
 
 	// serverMux.Handle("GET /users", mw.Middleware(http.HandlerFunc(userHandler.GetAllUsersHandler)))
 
-	// serverMux.Handle("POST /users/create-task", middleware.Middleware(http.HandlerFunc(taskHandler.CreateTaskHandler)))
+	serverMux.HandleFunc("POST /users/create-task", taskHandler.CreateTaskHandler)
 
 	// serverMux.Handle("GET /users/list-task", middleware.Middleware(http.HandlerFunc(taskHandler.GetAllTasksHandler)))
 
