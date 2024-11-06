@@ -20,7 +20,7 @@ func (th *TaskHandler) UpdateTaskStatusHandler(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	tasks, err := th.serviceTask.GetAllDataTask() // Pastikan ada method untuk ambil semua task
+	tasks, err := th.serviceTask.GetAllDataTask()
 	if err != nil {
 		http.Error(w, "Error fetching tasks", http.StatusInternalServerError)
 		return

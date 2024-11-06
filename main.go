@@ -3,56 +3,49 @@ package main
 import (
 	"day-22/database"
 	"day-22/handler"
-	"day-22/middleware"
 	"day-22/repository"
 	"day-22/service"
 	"fmt"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
 
 func main() {
+	// Inisialisasi koneksi ke database
 	db, err := database.InitDB()
 	if err != nil {
 		panic(err)
 	}
 	defer db.Close()
 
+	// Inisialisasi repository, service, dan handler untuk User
 	userRepo := repository.NewUserRepository(db)
 	userService := service.NewUserService(userRepo)
 	userHandler := handler.NewUserHandler(*userService)
-	// mw := middleware.NewMiddleware(userRepo)
 
+	// Inisialisasi repository, service, dan handler untuk Task
 	taskRepo := repository.NewTaskRepository(db)
 	taskService := service.NewTaskService(taskRepo)
 	taskHandler := handler.NewTaskHandler(*taskService)
 
-	serverMux := http.NewServeMux()
+	r := chi.NewRouter()
 
-	serverMux.HandleFunc("/users", userHandler.GetAllUsersHandler)
-	// serverMux.HandleFunc("/users/list-task", taskHandler.GetAllTasksHandler)
-	// serverMux.HandleFunc("/users/list-task/{id}", taskHandler.UpdateTaskStatusHandler)
-	serverMux.HandleFunc("/users/{id}", userHandler.GetUserDetailsHandler)
-	serverMux.HandleFunc("/", handler.FormRegist)
+	// Rute untuk User
+	r.Get("/users", userHandler.GetAllUsersHandler)
+	r.Get("/users/{id}", userHandler.GetUserDetailsHandler)
+	r.Post("/create", userHandler.CreateUserHandler)
+	r.Post("/login", userHandler.UserLoginHandler)
 
-	todoRoute := http.NewServeMux()
-	todoRoute.HandleFunc("GET /users/list-task", taskHandler.GetAllTasksHandler)
-	middRoute := middleware.Middleware(todoRoute)
-	serverMux.Handle("/users/list-task", middRoute)
+	// Rute untuk Task
 
-	serverMux.HandleFunc("POST /create", userHandler.CreateUserHandler)
-	serverMux.HandleFunc("POST /login", userHandler.UserLoginHandler)
+	r.Get("/users/list-task", taskHandler.GetAllTasksHandler)
+	r.Post("/users/create-task", taskHandler.CreateTaskHandler)
+	r.Get("/users/list-task/{id}", taskHandler.UpdateTaskStatusHandler)
 
-	// serverMux.Handle("GET /users", mw.Middleware(http.HandlerFunc(userHandler.GetAllUsersHandler)))
+	r.Get("/", handler.FormRegist)
 
-	serverMux.HandleFunc("POST /users/create-task", taskHandler.CreateTaskHandler)
-
-	// serverMux.Handle("GET /users/list-task", middleware.Middleware(http.HandlerFunc(taskHandler.GetAllTasksHandler)))
-
-	// serverMux.Handle("POST /users/list-task/{id}", middleware.Middleware(http.HandlerFunc(taskHandler.UpdateTaskStatusHandler)))
-
-	// serverMux.Handle("GET /users/{id}", middleware.Middleware(http.HandlerFunc(userHandler.GetUserDetailsHandler)))
-
+	// Start server
 	fmt.Println("Server started on port 8080")
-	http.ListenAndServe(":8080", serverMux)
-
+	http.ListenAndServe(":8080", r)
 }
