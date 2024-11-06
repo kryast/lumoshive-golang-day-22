@@ -1,0 +1,21 @@
+{{define "list-task-view"}}
+    {{template "layout-view"}}
+<main>
+    <section id="list-task" class="content">
+        <h2>List Task</h2> <!-- Judul sebaiknya sesuai dengan konten, di sini "List Task" -->
+        <ul>
+            {{range .}} <!-- Iterasi data task -->
+            <li class="list-data">
+                <p>{{.Description}}</p>
+                <!-- Kondisi untuk status task, jika incomplete, maka tambahkan btn-inactive -->
+                <a class="btn-active{{if eq .Status "incomplete"}} btn-inactive{{end}}" href="#">
+                    {{.Status}}
+                </a>
+                <!-- Link menuju detail task dengan ID -->
+                <a class="btn-detail" href="/users/list-task/{{.ID}}">Check</a> <!-- Pastikan URL ini sesuai dengan routing handler Anda -->
+            </li>
+            {{end}}
+        </ul>
+    </section>
+</main>
+{{end}}

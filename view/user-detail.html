@@ -1,0 +1,14 @@
+{{define "user-detail-view"}}
+    {{template "layout-view"}}
+<main>
+    <section id="user-detail" class="content">
+        <h2>Detail User</h2>
+        <p><strong>Nama:</strong> <span id="user-name">{{.Name}}</span></p>
+        <p><strong>Username:</strong> <span id="user-Username">{{.Username}}</span></p>
+        <p><strong>Password:</strong> <span id="user-Password">{{.Password}}</span></p>
+        <p><strong>Status:</strong> <span id="user-Status">{{.Status}}</span></p>
+        <p><strong>Token:</strong> <span id="user-token">{{.Token}}</span></p>
+        <button>Back</button>
+    </section>
+</main>
+{{end}}

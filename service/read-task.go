@@ -1,10 +1,10 @@
 package service
 
 import (
-	"fmt"
+	"day-22/model"
 )
 
-func (ts *TaskService) GetAllDataTask() ([]map[string]interface{}, error) {
+func (ts *TaskService) GetAllDataTask() (*[]model.Task, error) {
 
 	tasks, err := ts.RepoTask.GetAll()
 
@@ -12,19 +12,6 @@ func (ts *TaskService) GetAllDataTask() ([]map[string]interface{}, error) {
 		return nil, err
 	}
 
-	if tasks == nil || len(*tasks) == 0 {
-		fmt.Println("No task found")
-		return nil, err
-	}
-
-	var listTask []map[string]interface{}
-	for _, task := range *tasks {
-		listTask = append(listTask, map[string]interface{}{
-			"description": task.Description,
-			"status":      task.Status,
-		})
-	}
-
-	return listTask, nil
+	return tasks, nil
 
 }

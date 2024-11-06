@@ -1,19 +1,17 @@
 package handler
 
 import (
-	"day-22/library"
+	"fmt"
 	"net/http"
 )
 
 func (uh *UserHandler) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 
-	// Call the service to get all tasks
 	users, err := uh.serviceUsers.GetAllDataUser()
 	if err != nil {
-		http.Error(w, "Error fetching user", http.StatusInternalServerError)
-		return
+		fmt.Println("err ", err)
 	}
 
-	// Prepare the response
-	library.SuccessResponse(w, "success get all data users", users)
+	// fmt.Println("data :", *customers)
+	templates.ExecuteTemplate(w, "list-user-view", *users)
 }

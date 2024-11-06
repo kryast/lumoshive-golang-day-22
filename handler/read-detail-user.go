@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"day-22/library"
 	"net/http"
 	"strconv"
 )
@@ -20,5 +19,6 @@ func (uh *UserHandler) GetUserDetailsHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	library.SuccessResponse(w, "success get users detail", user)
+	// library.SuccessResponse(w, "success get users detail", user)
+	templates.ExecuteTemplate(w, "user-detail-view", *user)
 }

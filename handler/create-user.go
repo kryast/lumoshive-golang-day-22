@@ -12,7 +12,7 @@ type UserHandler struct {
 	serviceUsers service.UserService
 }
 
-func NewCustomerHandler(us service.UserService) UserHandler {
+func NewUserHandler(us service.UserService) UserHandler {
 	return UserHandler{serviceUsers: us}
 }
 
@@ -33,4 +33,5 @@ func (uh *UserHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request)
 	}
 
 	library.SuccessResponse(w, "Success create user", users)
+	http.Redirect(w, r, "/all-customer", http.StatusSeeOther)
 }

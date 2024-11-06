@@ -3,21 +3,19 @@ package repository
 import "day-22/model"
 
 func (r *UserRepositoryDB) GetAll() (*[]model.User, error) {
-	query := `SELECT name, status FROM users`
+	users := []model.User{}
+	query := `SELECT id, name, username, password, status, token FROM users`
 	rows, err := r.DB.Query(query)
-
 	if err != nil {
 		return nil, err
 	}
 
-	defer rows.Close()
-
-	users := []model.User{}
-
 	for rows.Next() {
 		var user model.User
-		rows.Scan(&user.Name, &user.Status)
-
+		err := rows.Scan(&user.ID, &user.Name, &user.Username, &user.Password, &user.Status, &user.Token)
+		if err != nil {
+			return nil, err
+		}
 		users = append(users, user)
 	}
 
