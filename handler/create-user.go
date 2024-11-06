@@ -37,6 +37,6 @@ func (uh *UserHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	templates.ExecuteTemplate(w, "register-view", users)
+	templates.ExecuteTemplate(w, "register-success-view", users)
 
 }

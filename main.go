@@ -44,6 +44,7 @@ func main() {
 	r.Get("/users/list-task/{id}", taskHandler.UpdateTaskStatusHandler)
 
 	r.Get("/", handler.FormRegist)
+	r.Get("/login-form", handler.FormLogin)
 
 	// Start server
 	fmt.Println("Server started on port 8080")
